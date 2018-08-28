@@ -1,0 +1,16 @@
+* { box-sizing:border-box; }
+
+body {
+    background: url("../pink-bg.jpg") no-repeat center center fixed;
+    background-size: cover;
+}
+
+@font-face{
+    font-family: EuropaTextC,serif;
+    src: url(../../shrifts/11288.ttf);
+}
+
+@font-face{
+    font-family: Inspiration,serif;
+    src: url(../../shrifts/11991.ttf);
+}

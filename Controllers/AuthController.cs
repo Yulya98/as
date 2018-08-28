@@ -11,6 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
 using Lab_7__ASP.NET_Core_.Models;
+//using Lab_7__ASP.NET_Core_.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Lab_7__ASP.NET_Core_.Controllers
 {
@@ -27,43 +29,45 @@ namespace Lab_7__ASP.NET_Core_.Controllers
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await userManager.FindByNameAsync(model.Username);
+            var user = await userManager.FindByEmailAsync(model.Email);
             if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
             {
                 var claims = new[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 
                 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MySuperSecureKey"));
 
                 var token = new JwtSecurityToken(
-                    issuer: "http://localhost:52200",
-                    audience: "http://localhost:52200",
+                    issuer: "http://localhost:54362",
+                    audience: "http://localhost:54362",
                     expires: DateTime.UtcNow.AddHours(1),
                     claims: claims,
                     signingCredentials: new Microsoft.IdentityModel.Tokens.SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
                     );
 
-                await addToken(token,user.Id);
+                var newToken = new JwtSecurityTokenHandler().WriteToken(token);
 
+                await addToken(newToken, user.Id);
                 return Ok(new
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    token = newToken,
                     expiration = token.ValidTo
                 });
             }
             return Unauthorized();
         }
 
-        public async Task<IActionResult> addToken(JwtSecurityToken token,string id)
+        public async Task<IActionResult> addToken(string token, string id)
         {
             TokenDatabaseContext table = new TokenDatabaseContext();
             AspNetUserTokens tokenUser = new AspNetUserTokens();
             tokenUser.UserId = id;
-            tokenUser.Value = token.EncodedHeader;
+            tokenUser.Value = token;
             await table.AspNetUserTokens.AddAsync(tokenUser);
+            await table.SaveChangesAsync();
             return Ok();
         }
 
@@ -82,6 +86,25 @@ namespace Lab_7__ASP.NET_Core_.Controllers
                     UserName = model.Username
                 };
                 await userManager.CreateAsync(user, model.Password);
+
+                var claims = new[]
+{
+                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                };
+
+                var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MySuperSecureKey"));
+
+                var token = new JwtSecurityToken(
+                    issuer: "http://localhost:54362",
+                    audience: "http://localhost:54362",
+                    expires: DateTime.UtcNow.AddHours(1),
+                    claims: claims,
+                    signingCredentials: new Microsoft.IdentityModel.Tokens.SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+                    );
+                var newToken = new JwtSecurityTokenHandler().WriteToken(token);
+                await addToken(newToken, user.Id);
+                HttpContext.Session.SetString("userId", user.Id);
             }
             return Ok();
         }

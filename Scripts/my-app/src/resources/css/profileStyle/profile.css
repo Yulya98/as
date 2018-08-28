@@ -1,0 +1,53 @@
+.menu {
+    margin-top: -6.5vw;
+    margin-bottom: 1.5vh;
+    float: left;
+    position: relative;
+    width: 60vw;
+}
+
+.menu  ul {
+    float:left;
+    position:relative;
+    margin-left:10.5vw;
+}
+
+.menu  ul li {
+    float:left;
+    list-style:none;
+    margin-left: 1.7vw;
+    position:relative;
+}
+
+.menu ul li a {
+    font-family: EuropaTextC, cursive;
+    font-size: 2vw;
+    text-decoration: none;
+    border-right: 2px solid #D3D3D3;
+    display:block;
+    padding:0.6vw 1vw 0.6vw 0vw;
+    color:ghostwhite;
+}
+
+#menu_none{
+    border:none
+}
+
+.menu ul li a:hover {
+    color: aqua;
+}
+
+.container-menu{
+    margin-left: 20%;
+}
+
+.header{
+    background-color: #DDA0DD;
+    box-shadow: -0.4vw 0.4vw 0vw -0.1vw #777676;
+    left: 25%;
+    margin: 1.4% auto;
+    height: 13%;
+    width: 50%;
+    border-radius: 3vw 3vw 3vw 3vw;
+}
+

@@ -7,15 +7,12 @@ namespace Lab_7__ASP.NET_Core_.Models
     public partial class TokenDatabaseContext : DbContext
     {
         public virtual DbSet<Album> Album { get; set; }
-        public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
-        public virtual DbSet<AspNetUserClaims> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual DbSet<Images> Images { get; set; }
         public virtual DbSet<Table> Table { get; set; }
         public virtual DbSet<UserAlbum> UserAlbum { get; set; }
         public virtual DbSet<UserAlbumPosts> UserAlbumPosts { get; set; }
-        public virtual DbSet<UserInformation> UserInformation { get; set; }
         public virtual DbSet<UsersImages> UsersImages { get; set; }
         public virtual DbSet<UsersImagesComments> UsersImagesComments { get; set; }
 
@@ -24,7 +21,7 @@ namespace Lab_7__ASP.NET_Core_.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=TokenDatabase;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer(@"Server=wsc-252-71\sqlexpress;Database=TokenDatabase;Trusted_Connection=True;");
             }
         }
 
@@ -36,31 +33,6 @@ namespace Lab_7__ASP.NET_Core_.Models
                     .IsRequired()
                     .HasMaxLength(20)
                     .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<AspNetRoles>(entity =>
-            {
-                entity.HasIndex(e => e.NormalizedName)
-                    .HasName("RoleNameIndex")
-                    .IsUnique()
-                    .HasFilter("([NormalizedName] IS NOT NULL)");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.Name).HasMaxLength(256);
-
-                entity.Property(e => e.NormalizedName).HasMaxLength(256);
-            });
-
-            modelBuilder.Entity<AspNetUserClaims>(entity =>
-            {
-                entity.HasIndex(e => e.UserId);
-
-                entity.Property(e => e.UserId).IsRequired();
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.AspNetUserClaims)
-                    .HasForeignKey(d => d.UserId);
             });
 
             modelBuilder.Entity<AspNetUsers>(entity =>
@@ -75,22 +47,40 @@ namespace Lab_7__ASP.NET_Core_.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.City)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Email).HasMaxLength(256);
+
+                entity.Property(e => e.FieldOfActivity)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
 
                 entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+
+                entity.Property(e => e.Pseudonym)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Surname)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.UserName).HasMaxLength(256);
             });
 
             modelBuilder.Entity<AspNetUserTokens>(entity =>
             {
-                entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+                entity.HasKey(e => e.UserId);
+
+                entity.Property(e => e.UserId).ValueGeneratedNever();
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.AspNetUserTokens)
-                    .HasForeignKey(d => d.UserId);
+                    .WithOne(p => p.AspNetUserTokens)
+                    .HasForeignKey<AspNetUserTokens>(d => d.UserId);
             });
 
             modelBuilder.Entity<Images>(entity =>
@@ -112,7 +102,7 @@ namespace Lab_7__ASP.NET_Core_.Models
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Table)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__Table__UserId__6754599E");
+                    .HasConstraintName("FK__Table__UserId__03F0984C");
             });
 
             modelBuilder.Entity<UserAlbum>(entity =>
@@ -127,7 +117,7 @@ namespace Lab_7__ASP.NET_Core_.Models
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserAlbum)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__UserAlbum__UserI__6B24EA82");
+                    .HasConstraintName("FK__UserAlbum__UserI__04E4BC85");
             });
 
             modelBuilder.Entity<UserAlbumPosts>(entity =>
@@ -143,41 +133,6 @@ namespace Lab_7__ASP.NET_Core_.Models
                     .HasForeignKey(d => d.IdUsersAlbum)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__UserAlbum__IdUse__6EF57B66");
-            });
-
-            modelBuilder.Entity<UserInformation>(entity =>
-            {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.City)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.FieldOfActivity)
-                    .IsRequired()
-                    .HasMaxLength(30)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.IdUser)
-                    .IsRequired()
-                    .HasMaxLength(450);
-
-                entity.Property(e => e.Pseudonym)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Surname)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-
-                entity.HasOne(d => d.IdUserNavigation)
-                    .WithMany(p => p.UserInformation)
-                    .HasForeignKey(d => d.IdUser)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__UserInfor__IdUse__5CD6CB2B");
             });
 
             modelBuilder.Entity<UsersImages>(entity =>
@@ -200,7 +155,7 @@ namespace Lab_7__ASP.NET_Core_.Models
                     .WithMany(p => p.UsersImages)
                     .HasForeignKey(d => d.IdUser)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__UsersImag__IdUse__619B8048");
+                    .HasConstraintName("FK__UsersImag__IdUse__02FC7413");
             });
 
             modelBuilder.Entity<UsersImagesComments>(entity =>
@@ -221,7 +176,7 @@ namespace Lab_7__ASP.NET_Core_.Models
                 entity.HasOne(d => d.IdUserNavigation)
                     .WithMany(p => p.UsersImagesComments)
                     .HasForeignKey(d => d.IdUser)
-                    .HasConstraintName("FK__UsersImag__IdUse__73BA3083");
+                    .HasConstraintName("FK__UsersImag__IdUse__05D8E0BE");
             });
         }
     }

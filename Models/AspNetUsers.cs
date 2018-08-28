@@ -7,17 +7,18 @@ namespace Lab_7__ASP.NET_Core_.Models
     {
         public AspNetUsers()
         {
-            AspNetUserClaims = new HashSet<AspNetUserClaims>();
-            AspNetUserTokens = new HashSet<AspNetUserTokens>();
             Table = new HashSet<Table>();
             UserAlbum = new HashSet<UserAlbum>();
-            UserInformation = new HashSet<UserInformation>();
             UsersImages = new HashSet<UsersImages>();
             UsersImagesComments = new HashSet<UsersImagesComments>();
         }
 
         public string Id { get; set; }
         public string UserName { get; set; }
+        public string Surname { get; set; }
+        public string Pseudonym { get; set; }
+        public string FieldOfActivity { get; set; }
+        public string City { get; set; }
         public string NormalizedUserName { get; set; }
         public string Email { get; set; }
         public string NormalizedEmail { get; set; }
@@ -32,11 +33,9 @@ namespace Lab_7__ASP.NET_Core_.Models
         public bool LockoutEnabled { get; set; }
         public int AccessFailedCount { get; set; }
 
-        public ICollection<AspNetUserClaims> AspNetUserClaims { get; set; }
-        public ICollection<AspNetUserTokens> AspNetUserTokens { get; set; }
+        public AspNetUserTokens AspNetUserTokens { get; set; }
         public ICollection<Table> Table { get; set; }
         public ICollection<UserAlbum> UserAlbum { get; set; }
-        public ICollection<UserInformation> UserInformation { get; set; }
         public ICollection<UsersImages> UsersImages { get; set; }
         public ICollection<UsersImagesComments> UsersImagesComments { get; set; }
     }

@@ -45,8 +45,8 @@ namespace Lab_7__ASP.NET_Core_
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidAudience = "http://localhost:52200",
-                    ValidIssuer = "http://localhost:52200",
+                    ValidAudience = "http://localhost:54362",
+                    ValidIssuer = "http://localhost:54362",
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MySuperSecureKey"))
                 };
             });
@@ -60,11 +60,18 @@ namespace Lab_7__ASP.NET_Core_
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles();
+
+            app.UseMvc(routes => {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{*url}",
+                    defaults: new { controller = "Home", action = "Index" });
+            });
+
             SeedDatabase.Initialize(app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope().ServiceProvider);
 
             app.UseAuthentication();
-
-            app.UseMvc();
         }
     }
 }
